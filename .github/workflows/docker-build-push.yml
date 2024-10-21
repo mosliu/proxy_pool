@@ -37,10 +37,10 @@ jobs:
         context: .
         push: true
         tags: |
-          mosliu/url-checker:latest
-          mosliu/url-checker:${{ steps.get_version.outputs.VERSION }}
-          mosliu/url-checker:${{ steps.get_version.outputs.VERSION }}-${{ steps.date.outputs.date }}
-          mosliu/url-checker:${{ github.sha }}
+          mosliu/proxy_pool:latest
+          mosliu/proxy_pool:${{ steps.get_version.outputs.VERSION }}
+          mosliu/proxy_pool:${{ steps.get_version.outputs.VERSION }}-${{ steps.date.outputs.date }}
+          mosliu/proxy_pool:${{ github.sha }}
 
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
