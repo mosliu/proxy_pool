@@ -17,6 +17,14 @@ import json
 from time import sleep
 
 from util.webRequest import WebRequest
+from util.PlaywrightRequest import PlaywrightRequest
+
+# 新增导入
+import requests
+from bs4 import BeautifulSoup
+import random
+from fake_useragent import UserAgent
+import datetime
 
 
 class ProxyFetcher(object):
@@ -170,72 +178,102 @@ class ProxyFetcher(object):
         except Exception as e:
             print(e)
 
-    # @staticmethod
-    # def wallProxy01():
-    #     """
-    #     PzzQz https://pzzqz.com/
-    #     """
-    #     from requests import Session
-    #     from lxml import etree
-    #     session = Session()
-    #     try:
-    #         index_resp = session.get("https://pzzqz.com/", timeout=20, verify=False).text
-    #         x_csrf_token = re.findall('X-CSRFToken": "(.*?)"', index_resp)
-    #         if x_csrf_token:
-    #             data = {"http": "on", "ping": "3000", "country": "cn", "ports": ""}
-    #             proxy_resp = session.post("https://pzzqz.com/", verify=False,
-    #                                       headers={"X-CSRFToken": x_csrf_token[0]}, json=data).json()
-    #             tree = etree.HTML(proxy_resp["proxy_html"])
-    #             for tr in tree.xpath("//tr"):
-    #                 ip = "".join(tr.xpath("./td[1]/text()"))
-    #                 port = "".join(tr.xpath("./td[2]/text()"))
-    #                 yield "%s:%s" % (ip, port)
-    #     except Exception as e:
-    #         print(e)
+    @staticmethod
+    def freeProxy12():
+        """ 获取free-proxy-list.net上的代理 """
+        url = 'https://free-proxy-list.net/'
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        proxies = []
+        for row in soup.find('table', class_='table table-striped table-bordered').tbody.find_all('tr'):
+            columns = row.find_all('td')
+            ip_address = columns[0].text
+            port = columns[1].text
+            https = columns[6].text
+            anonymity = columns[4].text
+            if https == 'yes' and anonymity == 'elite proxy':
+                yield f"{ip_address}:{port}"
 
-    # @staticmethod
-    # def freeProxy10():
-    #     """
-    #     墙外网站 cn-proxy
-    #     :return:
-    #     """
-    #     urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
-    #     request = WebRequest()
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
-    #         for proxy in proxies:
-    #             yield ':'.join(proxy)
+    @staticmethod
+    def freeProxy13():
+        """ proxy-list.download 一整页代理 随机20个 """
+        url ='https://www.proxy-list.download/api/v2/get?l=en&t=https'
+        response = requests.get(url, headers={'User-Agent': UserAgent().random})
+        if response.status_code == 200:
+            data = json.loads(response.text)
+            ip_port_list = [f"{item['IP']}:{item['PORT']}" for item in data['LISTA']]
+            if len(ip_port_list) >= 20:
+                return random.sample(ip_port_list, 20)
+            else:
+                return ip_port_list
+        else:
+            print('Failed to retrieve the webpage')
+            print(response.status_code)
+            return []
 
-    # @staticmethod
-    # def freeProxy11():
-    #     """
-    #     https://proxy-list.org/english/index.php
-    #     :return:
-    #     """
-    #     urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
-    #     request = WebRequest()
-    #     import base64
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
-    #         for proxy in proxies:
-    #             yield base64.b64decode(proxy).decode()
+    @staticmethod
+    def freeProxy14():
+        """ 66ip.cn 获取20个 """
+        url ='http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=4&start=&ports=&export=&ipaddress=&area=0&proxytype=1&api=66ip'
+        response = requests.get(url, headers={'User-Agent': UserAgent().random})
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            ip_port_list = soup.text.split('\r\n')[2:]
+            return [item.strip() for item in ip_port_list if item.strip()]
+        else:
+            print('Failed to retrieve the webpage')
+            print(response.status_code)
+            return []
 
-    # @staticmethod
-    # def freeProxy12():
-    #     urls = ['https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1']
-    #     request = WebRequest()
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
-    #         for proxy in proxies:
-    #             yield ':'.join(proxy)
+    @staticmethod
+    def freeProxy15():
+        """ 开心代理 随机三页代理 """
+        def get_page_proxies(page_url):
+            response = requests.get(page_url, headers={'User-Agent': UserAgent().random})
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                ip_table = soup.find('table', class_='active')
+                ip_rows = ip_table.find_all('tr')[1:]
+                for row in ip_rows:
+                    tds = row.find_all('td')
+                    if tds[3].text == 'HTTP,HTTPS' and tds[4].text[0] in ['1','2','0']:
+                        yield f"{tds[0].text}:{tds[1].text}"
+            else:
+                print('Failed to retrieve the webpage')
+                print(response.status_code)
+
+        base_url = 'http://www.kxdaili.com/dailiip/1/{}.html'
+        page_count = 10  # 假设有10页
+        random_pages = random.sample(range(1, page_count + 1), 3)
+        
+        for page in random_pages:
+            yield from get_page_proxies(base_url.format(page))
+
+    @staticmethod
+    def freeProxy16():
+        """ 小幻代理 20个 """
+        current_time = datetime.datetime.now().strftime('%Y/%m/%d/%H')
+        url = f'https://ip.ihuan.me/today/{current_time}.html'
+        # res = WebRequest().get(url, timeout=10)
+        # res1 = PlaywrightRequest().get('https://lowjs.com', timeout=30)
+        response = requests.get(url, headers={'User-Agent': UserAgent().random})
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            ip_port_list = []
+            for item in soup.find('p', class_='text-left'):
+                if '#支持HTTPS#支持POST' in str(item) and '#[高匿]' in str(item) and ':' in str(item):
+                    ip_port_list.append(str(item).split('@')[0])
+            return ip_port_list
+        else:
+            print('Failed to retrieve the webpage')
+            print(response.status_code)
+            return []
 
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy06():
+    for _ in p.freeProxy01():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm

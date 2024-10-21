@@ -22,6 +22,7 @@ from helper.check import Checker
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
+from handler.vipProxyHandler import VIPProxyHandler
 
 
 def __runProxyFetch():
@@ -44,6 +45,32 @@ def __runProxyCheck():
     Checker("use", proxy_queue)
 
 
+def __runVIPProxyFetch():
+    vip_proxy_queue = Queue()  # 使用相同的 Queue 类
+    vip_proxy_handler = VIPProxyHandler()
+    
+    for proxy in vip_proxy_handler.fetch():
+        vip_proxy_queue.put(proxy)
+    
+    Checker("vip", vip_proxy_queue)
+    
+    # 将 VIP 代理存储到 Redis
+    for _ in range(vip_proxy_queue.qsize()):
+        proxy = vip_proxy_queue.get()
+        vip_proxy_handler.put(proxy)
+
+
+def __runVIPProxyCheck():
+    vip_proxy_handler = VIPProxyHandler()
+    vip_proxy_queue = Queue()
+    if vip_proxy_handler.getCount().get("total", 0) < vip_proxy_handler.conf.vipPoolSizeMin:
+        for proxy in vip_proxy_handler.fetch():
+            vip_proxy_handler.put(proxy)
+    for proxy in vip_proxy_handler.getAll():
+        vip_proxy_queue.put(proxy)
+    Checker("vip", vip_proxy_queue)
+
+
 def runScheduler():
     __runProxyFetch()
 
@@ -53,6 +80,8 @@ def runScheduler():
 
     scheduler.add_job(__runProxyFetch, 'interval', minutes=4, id="proxy_fetch", name="proxy采集")
     scheduler.add_job(__runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
+    scheduler.add_job(__runVIPProxyFetch, 'interval', minutes=30, id="vip_proxy_fetch", name="VIP代理采集")
+    scheduler.add_job(__runVIPProxyCheck, 'interval', minutes=2, id="vip_proxy_check", name="VIP代理检查")
     executors = {
         'default': {'type': 'threadpool', 'max_workers': 20},
         'processpool': ProcessPoolExecutor(max_workers=5)

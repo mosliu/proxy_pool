@@ -37,10 +37,11 @@ PORT = 5010
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
+DB_CONN = 'redis://:dzredis45@172.23.16.113:6379/5'
 
 # proxy table name
-TABLE_NAME = 'use_proxy'
+TABLE_NAME = 'proxy_pool'
+VIP_TABLE_NAME = 'proxy_vip_pool'
 
 
 # ###### config the proxy fetch function ######
@@ -90,3 +91,11 @@ PROXY_REGION = True
 # Otherwise it will detect the timezone from the system automatically.
 
 TIMEZONE = "Asia/Shanghai"
+
+
+VIP_PROXY_ADDR = "您的代理IP:端口"
+VIP_AUTH_KEY = "请改成您的Key"
+VIP_PASSWORD = "请改成您的AuthPwd"
+
+# 在文件末尾添加以下配置项
+VIP_API_KEY = "FKZBI8HR"

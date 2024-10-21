@@ -138,6 +138,9 @@ class RedisClient(object):
         """
         self.name = name
 
+    def getTable(self):
+        return self.name
+
     def test(self):
         log = LogHandler('redis_client')
         try:

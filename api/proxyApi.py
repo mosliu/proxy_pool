@@ -22,13 +22,21 @@ from flask import Flask, jsonify, request
 
 from util.six import iteritems
 from helper.proxy import Proxy
-from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
+from handler.proxyHandler import ProxyHandler
+from handler.vipProxyHandler import VIPProxyHandler
+
+from handler.logHandler import LogHandler
+log = LogHandler("ProxyApi")
 
 app = Flask(__name__)
 conf = ConfigHandler()
 proxy_handler = ProxyHandler()
+vip_proxy_handler = VIPProxyHandler()
 
+# # ... 确保 VIPProxyHandler 使用正确的表名 ...
+# vip_proxy_handler.db.changeTable(conf.vipTableName)
+# log.info(f"VIP代理数据库表: {vip_proxy_handler.db.getTable()}")
 
 class JsonResponse(Response):
     @classmethod
@@ -46,7 +54,8 @@ api_list = [
     {"url": "/pop", "params": "", "desc": "get and delete a proxy"},
     {"url": "/delete", "params": "proxy: 'e.g. 127.0.0.1:8080'", "desc": "delete an unable proxy"},
     {"url": "/all", "params": "type: ''https'|''", "desc": "get all proxy from proxy pool"},
-    {"url": "/count", "params": "", "desc": "return proxy count"}
+    {"url": "/count", "params": "", "desc": "return proxy count"},
+    {"url": "/getvip", "params": "", "desc": "get a VIP proxy"},
     # 'refresh': 'refresh proxy pool',
 ]
 
@@ -58,6 +67,7 @@ def index():
 
 @app.route('/get/')
 def get():
+    log.info("获取代理")
     https = request.args.get("type", "").lower() == 'https'
     proxy = proxy_handler.get(https)
     return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
@@ -103,9 +113,32 @@ def getCount():
     return {"http_type": http_type_dict, "source": source_dict, "count": len(proxies)}
 
 
+@app.route('/getvip/')
+def getVIP():
+    log.info("获取VIP代理")
+    https = request.args.get("type", "").lower() == 'https'
+    proxy = vip_proxy_handler.get(https)
+    
+    if proxy:
+        log.info(f"获取到VIP代理: {proxy}")
+        # log.info(f"获取到VIP代理: {proxy.to_dict}")
+        return proxy
+    else:
+        log.info("VIP队列为空, 从后台调用接口获取新的VIP代理")
+        new_proxies = vip_proxy_handler.fetch(https)
+        
+        for new_proxy in new_proxies:
+            if new_proxy:
+                vip_proxy_handler.put(new_proxy)
+                log.info(f"添加新的VIP代理: {new_proxy.to_dict}")
+                return new_proxy.to_dict
+        
+        return {"code": 0, "src": "无可用的VIP代理"}
+
+
 def runFlask():
     if platform.system() == "Windows":
-        app.run(host=conf.serverHost, port=conf.serverPort)
+        app.run(host=conf.serverHost, port=conf.serverPort,debug=True)
     else:
         import gunicorn.app.base
 

@@ -81,3 +81,24 @@ class ConfigHandler(withMetaclass(Singleton)):
     def timezone(self):
         return os.getenv("TIMEZONE", setting.TIMEZONE)
 
+# 添加 VIP 代理相关的配置项
+    @LazyProperty
+    def vipProxyAddr(self):
+        return os.environ.get("VIP_PROXY_ADDR", setting.VIP_PROXY_ADDR)
+
+    @LazyProperty
+    def vipAuthKey(self):
+        return os.environ.get("VIP_AUTH_KEY", setting.VIP_AUTH_KEY)
+
+    @LazyProperty
+    def vipPassword(self):
+        return os.environ.get("VIP_PASSWORD", setting.VIP_PASSWORD)
+
+    @LazyProperty
+    def vip_api_key(self):
+        return os.environ.get("VIP_API_KEY", setting.VIP_API_KEY)
+    
+    @LazyProperty
+    def vipTableName(self):
+        return os.environ.get("VIP_TABLE_NAME", setting.VIP_TABLE_NAME)
+    

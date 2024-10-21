@@ -55,6 +55,7 @@ class DbClient(withMetaclass(Singleton)):
         """
         self.parseDbConn(db_conn)
         self.__initDbClient()
+        self.table = None  # 添加一个实例变量来存储表名
 
     @classmethod
     def parseDbConn(cls, db_conn):
@@ -111,7 +112,11 @@ class DbClient(withMetaclass(Singleton)):
         return self.client.clear()
 
     def changeTable(self, name):
+        self.table = name
         self.client.changeTable(name)
+
+    def getTable(self):
+        return self.table
 
     def getCount(self):
         return self.client.getCount()

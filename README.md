@@ -1,11 +1,11 @@
 
 ProxyPool 爬虫代理IP池
 =======
-[![Build Status](https://travis-ci.org/jhao104/proxy_pool.svg?branch=master)](https://travis-ci.org/jhao104/proxy_pool)
-[![](https://img.shields.io/badge/Powered%20by-@j_hao104-green.svg)](http://www.spiderpy.cn/blog/)
-[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/jhao104/proxy_pool/blob/master/LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/jhao104/proxy_pool.svg)](https://github.com/jhao104/proxy_pool/graphs/contributors)
-[![](https://img.shields.io/badge/language-Python-green.svg)](https://github.com/jhao104/proxy_pool)
+[![Build Status](https://travis-ci.org/mosliu/proxy_pool.svg?branch=master)](https://travis-ci.org/mosliu/proxy_pool)
+[![](https://img.shields.io/badge/Powered%20by-@mosliu-green.svg)](http://www.spiderpy.cn/blog/)
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/mosliu/proxy_pool/blob/master/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/mosliu/proxy_pool.svg)](https://github.com/mosliu/proxy_pool/graphs/contributors)
+[![](https://img.shields.io/badge/language-Python-green.svg)](https://github.com/mosliu/proxy_pool)
 
     ______                        ______             _
     | ___ \_                      | ___ \           | |
@@ -15,6 +15,8 @@ ProxyPool 爬虫代理IP池
     \_|   |_|  \___/ /_/\_\ \__  |\_|   \___/ \___/ \_____\
                            __ / /
                           /___ /
+
+forked from jhao104/proxy_pool
 
 ### ProxyPool
 
@@ -32,9 +34,6 @@ ProxyPool 爬虫代理IP池
 [![](https://img.shields.io/badge/Python-3.11-blue.svg)](https://docs.python.org/3.11/)
 
 * 测试地址: http://demo.spiderpy.cn (勿压谢谢)
-
-* 付费代理推荐: [luminati-china](https://get.brightdata.com/github_jh). 国外的亮数据BrightData（以前叫luminati）被认为是代理市场领导者，覆盖全球的7200万IP，大部分是真人住宅IP，成功率扛扛的。付费套餐多种，需要高质量代理IP的可以注册后联系中文客服。[申请免费试用](https://get.brightdata.com/github_jh) 现在有首充多少送多少的活动。(PS:用不明白的同学可以参考这个[使用教程](https://www.cnblogs.com/jhao/p/15611785.html))。
-
 
 ### 运行项目
 

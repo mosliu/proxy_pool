@@ -18,7 +18,8 @@ import json
 class Proxy(object):
 
     def __init__(self, proxy, fail_count=0, region="", anonymous="",
-                 source="", check_count=0, last_status="", last_time="", https=False):
+                 source="", check_count=0, last_status="", last_time="", https=False,
+                 isp="", deadline="", out_ip=""):
         self._proxy = proxy
         self._fail_count = fail_count
         self._region = region
@@ -28,20 +29,27 @@ class Proxy(object):
         self._last_status = last_status
         self._last_time = last_time
         self._https = https
+        self._isp = isp
+        self._deadline = deadline
+        self._out_ip = out_ip
 
     @classmethod
     def createFromJson(cls, proxy_json):
         _dict = json.loads(proxy_json)
-        return cls(proxy=_dict.get("proxy", ""),
-                   fail_count=_dict.get("fail_count", 0),
-                   region=_dict.get("region", ""),
-                   anonymous=_dict.get("anonymous", ""),
-                   source=_dict.get("source", ""),
-                   check_count=_dict.get("check_count", 0),
-                   last_status=_dict.get("last_status", ""),
-                   last_time=_dict.get("last_time", ""),
-                   https=_dict.get("https", False)
-                   )
+        return cls(
+            proxy=_dict.get("proxy", ""),
+            fail_count=_dict.get("fail_count", 0),
+            region=_dict.get("region", ""),
+            anonymous=_dict.get("anonymous", ""),
+            source=_dict.get("source", ""),
+            check_count=_dict.get("check_count", 0),
+            last_status=_dict.get("last_status", ""),
+            last_time=_dict.get("last_time", ""),
+            https=_dict.get("https", False),
+            isp=_dict.get("isp", ""),
+            deadline=_dict.get("deadline", ""),
+            out_ip=_dict.get("out_ip", "")
+        )
 
     @property
     def proxy(self):
@@ -89,6 +97,21 @@ class Proxy(object):
         return self._https
 
     @property
+    def isp(self):
+        """ 互联网服务提供商 """
+        return self._isp
+
+    @property
+    def deadline(self):
+        """ 代理过期时间 """
+        return self._deadline
+
+    @property
+    def out_ip(self):
+        """ 出口 IP """
+        return self._out_ip
+
+    @property
     def to_dict(self):
         """ 属性字典 """
         return {"proxy": self.proxy,
@@ -99,7 +122,10 @@ class Proxy(object):
                 "source": self.source,
                 "check_count": self.check_count,
                 "last_status": self.last_status,
-                "last_time": self.last_time}
+                "last_time": self.last_time,
+                "isp": self.isp,
+                "deadline": self.deadline,
+                "out_ip": self.out_ip}
 
     @property
     def to_json(self):
@@ -127,8 +153,20 @@ class Proxy(object):
         self._https = value
 
     @region.setter
-    def region(self, value):
+    def regizon(self, value):
         self._region = value
+
+    @isp.setter
+    def isp(self, value):
+        self._isp = value
+
+    @deadline.setter
+    def deadline(self, value):
+        self._deadline = value
+
+    @out_ip.setter
+    def out_ip(self, value):
+        self._out_ip = value
 
     def add_source(self, source_str):
         if source_str:

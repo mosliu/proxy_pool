@@ -137,6 +137,9 @@ class SsdbClient(object):
         :return:
         """
         self.name = name
+    
+    def getTable(self):
+        return self.name
 
     def test(self):
         log = LogHandler('ssdb_client')
