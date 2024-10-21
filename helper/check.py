@@ -21,6 +21,7 @@ from util.webRequest import WebRequest
 from handler.logHandler import LogHandler
 from helper.validator import ProxyValidator
 from handler.proxyHandler import ProxyHandler
+from handler.vipProxyHandler import VIPProxyHandler
 from handler.configHandler import ConfigHandler
 
 
@@ -94,6 +95,7 @@ class _ThreadChecker(Thread):
         self.work_type = work_type
         self.log = LogHandler("checker")
         self.proxy_handler = ProxyHandler()
+        self.vip_proxy_handler = VIPProxyHandler()
         self.target_queue = target_queue
         self.conf = ConfigHandler()
 
@@ -132,12 +134,13 @@ class _ThreadChecker(Thread):
                                                                                     proxy.proxy.ljust(23),
                                                                                     proxy.fail_count))
                 self.proxy_handler.delete(proxy)
+                self.vip_proxy_handler.delete(proxy)
             else:
                 self.log.info('UseProxyCheck - {}: {} fail, count {} keep'.format(self.name,
                                                                                   proxy.proxy.ljust(23),
                                                                                   proxy.fail_count))
                 self.proxy_handler.put(proxy)
-
+                self.vip_proxy_handler.put(proxy)
 
 def Checker(tp, queue):
     """

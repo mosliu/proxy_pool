@@ -37,7 +37,7 @@ PORT = 5010
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-DB_CONN = 'redis://:dzredis45@172.23.16.113:6379/5'
+DB_CONN = 'redis://:asdsad@10.16.16.113:6379/5'
 
 # proxy table name
 TABLE_NAME = 'proxy_pool'
@@ -93,9 +93,32 @@ PROXY_REGION = True
 TIMEZONE = "Asia/Shanghai"
 
 
-VIP_PROXY_ADDR = "您的代理IP:端口"
-VIP_AUTH_KEY = "请改成您的Key"
-VIP_PASSWORD = "请改成您的AuthPwd"
+VIP_PROXY_ADDR = "https://share.proxy.qg.net/get"
 
 # 在文件末尾添加以下配置项
-VIP_API_KEY = "FKZBI8HR"
+VIP_API_KEY = "APIKEYYYYY"
+VIP_PASSWORD = "111"
+# 在文件中添加以下配置项
+
+# 是否获取免费代理
+ENABLE_FREE_PROXY = False
+
+
+
+
+# 在文件末尾添加以下代码
+import os
+import json
+
+# 定义影子文件的路径
+SHADOW_FILE = 'self_settings.json'
+
+# 加载影子文件
+if os.path.exists(SHADOW_FILE):
+    with open(SHADOW_FILE, 'r') as f:
+        shadow_settings = json.load(f)
+    
+    # 用影子文件中的值覆盖当前模块中的变量
+    for key, value in shadow_settings.items():
+        if key in globals():
+            globals()[key] = value

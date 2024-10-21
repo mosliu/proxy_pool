@@ -40,6 +40,7 @@ def server():
 
 
 if __name__ == '__main__':
-    # cli()
+    cli()
     # 测试用
-    server()
+    # server()
+    # schedule()

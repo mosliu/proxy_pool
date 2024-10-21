@@ -87,11 +87,7 @@ class ConfigHandler(withMetaclass(Singleton)):
         return os.environ.get("VIP_PROXY_ADDR", setting.VIP_PROXY_ADDR)
 
     @LazyProperty
-    def vipAuthKey(self):
-        return os.environ.get("VIP_AUTH_KEY", setting.VIP_AUTH_KEY)
-
-    @LazyProperty
-    def vipPassword(self):
+    def vip_assword(self):
         return os.environ.get("VIP_PASSWORD", setting.VIP_PASSWORD)
 
     @LazyProperty
@@ -102,3 +98,9 @@ class ConfigHandler(withMetaclass(Singleton)):
     def vipTableName(self):
         return os.environ.get("VIP_TABLE_NAME", setting.VIP_TABLE_NAME)
     
+
+# 在 ConfigHandler 类中添加以下属性
+
+    @LazyProperty
+    def enableFreeProxy(self):
+        return bool(os.getenv("ENABLE_FREE_PROXY", setting.ENABLE_FREE_PROXY))

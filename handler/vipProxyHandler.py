@@ -18,12 +18,13 @@ class VIPProxyHandler:
 
     def fetch(self, https=False):
         params = {
-            "key": self.api_key,
+            "key": self.conf.vip_api_key,
+            "pwd": self.conf.vip_assword,
             "num": 1,  # 增加获取的代理数量
             "distinct": True
         }
         try:
-            resp = requests.get(self.api_url, params=params)
+            resp = requests.get(self.conf.vipProxyAddr, params=params)
             log.info(f"获取VIP代理: {resp.text}")
             if resp.status_code == 200:
                 data = json.loads(resp.text)
